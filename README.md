@@ -36,13 +36,13 @@ The platform integrates advanced Doctor AI capabilities including:
 - Node.js 16+
 - npm or yarn
 - Supabase account (optional for full functionality)
-- Google Gemini API key is already hardcoded for demo purposes
+- Google Gemini API key (get one from Google AI Studio)
 
 ### Environment Setup
 
 1. Clone the repository
-2. The app is preconfigured with a Gemini API key, so you don't need to set it up for testing the AI functionality
-3. If you want to use your own API key, you can update it in the `.env.local` file:
+2. Copy `.env.example` to `.env` and update with your API keys:
+3. Configure your environment variables in the `.env` file:
    ```
    VITE_SUPABASE_URL=your-supabase-url
    VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
