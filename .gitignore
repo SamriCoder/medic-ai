@@ -17,6 +17,17 @@ dist-ssr
 .env.*
 !.env.example
 
+# API keys
+*apiKey*
+*api_key*
+*.key
+*.pem
+*credentials*.json
+*service-account*.json
+
+# Local storage with sensitive information
+local_settings.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
