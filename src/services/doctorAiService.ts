@@ -38,27 +38,22 @@ const initialAnalysisHistory = [
 // Function to get the current Gemini API key
 export function getGeminiApiKey(): string {
   // Check environment variable first (Vite exposes these with import.meta.env)
-  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (envKey && envKey !== 'your-gemini-api-key') {
-    console.log('Using Gemini API key from environment');
+  const envKey = ENV_GEMINI_API_KEY;
+  if (envKey && envKey.trim() !== '') {
     return envKey;
   }
   
-  // Hardcoded key for development - should be replaced in production
-  const hardcodedKey = 'AIzaSyAgsGk0-pnK61i2x5Gusf0qnSfUotWgx-U';
-  if (hardcodedKey) {
-    console.log('Using hardcoded Gemini API key (not recommended for production)');
-    return hardcodedKey;
-  }
-  
-  // Check localStorage as last resort
+  // Check localStorage as fallback
   const localStorageKey = localStorage.getItem(LOCAL_STORAGE_API_KEY);
-  if (localStorageKey && localStorageKey !== 'your-gemini-api-key') {
-    console.log('Using Gemini API key from localStorage');
+  if (localStorageKey && localStorageKey.trim() !== '') {
     return localStorageKey;
   }
   
-  console.warn('No valid Gemini API key found!');
+  // Log warning in development mode
+  if (import.meta.env.DEV) {
+    console.warn('No Gemini API key found. Please set VITE_GEMINI_API_KEY in your .env file or add it in settings.');
+  }
+  
   return '';
 }
 
@@ -99,6 +94,17 @@ function formatAIResponse(text: string): string {
   return formattedText;
 }
 
+// Add these interfaces for Gemini API response types
+interface GeminiResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{
+        text: string;
+      }>;
+    };
+  }>;
+}
+
 // Utility function to make direct API calls to Gemini
 export async function callGeminiDirectly(prompt: string, includeImage?: { mimeType: string, data: string }): Promise<string> {
   const apiKey = getGeminiApiKey();
@@ -122,7 +128,7 @@ export async function callGeminiDirectly(prompt: string, includeImage?: { mimeTy
       });
     }
     
-    const response = await axios.post(
+    const response = await axios.post<GeminiResponse>(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
       {
         contents: contents
@@ -675,4 +681,4 @@ The patient's first message is: ${question}`;
       throw new Error('Failed to process your medical question. Please try again later.');
     }
   }
-} 
+}
